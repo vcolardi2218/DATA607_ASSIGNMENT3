@@ -1,0 +1,81 @@
+---
+title: "DATA607_ASSIGNment_3"
+author: "Vincent Colardi"
+date: "September 15, 2018"
+output: html_document
+---
+
+## 3. Copy the introductory example. The vector name stores the extracted names.
+
+```{r}
+raw.data <-"555-1239Moe Szyslak(636) 555-0113Burns, C. Montgomery555-6542Rev. Timothy Lovejoy555 8904Ned Flanders636-555-3226Simpson, Homer5553642Dr. Julius Hibbert"
+raw.data
+library(stringr)
+```
+
+#### 1. Use the tools of this chapter to rearrange the vector so that all elements conform to the standard first_name last_name
+```{r}
+names <- unlist(str_extract_all(raw.data,"[[:alpha:]]{2,}"))
+names <- unlist(str_replace_all(names, "Dr", " "))
+names <- unlist(str_replace_all(names, "Rev", " "))
+names <- unlist(str_replace(names,"Simpson", "temporary"))
+names <- unlist(str_replace(names,"Homer", "Simpson"))
+names <- unlist(str_replace(names,"temporary", "Homer"))
+names <- unlist(str_replace(names,"Montgomery", "temporary"))
+names <- unlist(str_replace(names,"Burns", "Montgomery"))
+names <- unlist(str_replace(names,"temporary", "Burns"))
+names <- unlist(str_extract_all(names,"[[:alpha:]]{2,}"))
+names
+```
+
+#### 2. Construct a logical vector indicating whether a character has a title (i.e., Rev. and Dr.).
+```{r}
+title <- unlist(str_extract_all(raw.data,"[[:alpha:]]{2,}"))
+tosearch <- c("Rev","Dr")
+str_detect(title,tosearch)
+```
+
+#### 3. Construct a logical vector indicating whether a character has a second name
+```{r}
+second_name <- unlist(str_extract_all(raw.data,"[[:alpha:].,]{2,}"))
+replace_str <- c("Dr.", "Rev.")
+second_name <- str_replace_all(second_name, replace_str,"")
+second_name
+str_detect(second_name,"\\.")
+```
+
+
+## 4. Describe the types of strings that conform to the regular expressions and construct an example that is matched by the regular expression.
+
+#### 1. [0-9]+\\$
+#### The regular expression will match the first occurence of a digit from 1->9 followed by a special character $
+```{r}
+example_str <- "1$sample text 2$sample text"
+unlist(str_extract(example_str, "[0-9]+\\$"))
+```
+
+#### 2. \\b[a-z]{1,4}\\b
+#### The regular expression extracts out words of size 1 to 4 from the vector which are on a word edge before and after the word match
+```{r}
+shopping_list <- c("apples x4", "bag of flour", "bag of sugar", "milk x2")
+str_extract_all(shopping_list, "\\b[a-z]{1,4}\\b")
+```
+#### 3. .*?\\.txt$
+#### The regular expression is looking for the pattern of any word followed by a ".txt" string; the prceding word is optional
+```{r}
+sample_str <- c("test.txt","test",".txt")
+str_extract_all(sample_str, ".*?\\.txt$")
+```
+#### 4. \\d{2}/\\d{2}/\\d{4}
+#### This regular expression appears to search for a date format consisting of dd/dd/dddd 
+```{r}
+digit_str <- c("12/22/1962",2345, "10/25", "/1982")
+str_extract_all(digit_str, "\\d{2}/\\d{2}/\\d{4}")
+```
+#### 5. <(.+?).+?</\\1>
+#### This regular expression searches for a pattern of "<" followed by any number of chars and "</" followed by 1 character which matches the first char of the first string
+```{r}
+test_str <- c("<tee </t","<t <r")
+str_extract_all(test_str, "<(.+?).+?</\\1") 
+```
+
